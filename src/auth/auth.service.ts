@@ -8,7 +8,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private readonly usersService: UsersService,
     private jwtService: JwtService,
   ) {}
 

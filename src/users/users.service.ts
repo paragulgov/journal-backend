@@ -15,6 +15,10 @@ export class UsersService {
     return this.usersRepository.save(dto);
   }
 
+  findById(id: number) {
+    return this.usersRepository.findOne({ where: { id } });
+  }
+
   findByName(username: string) {
     return this.usersRepository.findOne({ where: { username } });
   }
