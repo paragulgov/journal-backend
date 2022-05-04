@@ -28,11 +28,11 @@ export class AuthService {
     const payload = { id: user.id, username: user.username, role: user.role };
 
     return {
-      accessToken: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
     };
   }
 
-  async registration(dto: CreateUserDto) {
+  async register(dto: CreateUserDto) {
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(dto.password, salt);
 
@@ -48,7 +48,7 @@ export class AuthService {
     };
 
     return {
-      accessToken: this.jwtService.sign(payload),
+      token: this.jwtService.sign(payload),
     };
   }
 }
