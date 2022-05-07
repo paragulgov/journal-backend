@@ -14,11 +14,14 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByName(username);
-    const isMatch = await bcrypt.compare(pass, user.password);
 
-    if (user && isMatch) {
-      const { password, ...result } = user;
-      return result;
+    if (user) {
+      const isMatch = await bcrypt.compare(pass, user.password);
+
+      if (isMatch) {
+        const { password, ...result } = user;
+        return result;
+      }
     }
 
     return null;
@@ -28,6 +31,7 @@ export class AuthService {
     const payload = { id: user.id, username: user.username, role: user.role };
 
     return {
+      userInfo: user,
       token: this.jwtService.sign(payload),
     };
   }
@@ -36,18 +40,19 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(dto.password, salt);
 
-    const createdUser = await this.usersService.create({
+    const { password, ...registerUser } = await this.usersService.create({
       ...dto,
       password: hashPassword,
     });
 
     const payload = {
-      id: createdUser.id,
-      username: createdUser.username,
-      role: createdUser.role,
+      id: registerUser.id,
+      username: registerUser.username,
+      role: registerUser.role,
     };
 
     return {
+      userInfo: registerUser,
       token: this.jwtService.sign(payload),
     };
   }
