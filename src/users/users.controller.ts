@@ -10,9 +10,9 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
+  @Post()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);
   }

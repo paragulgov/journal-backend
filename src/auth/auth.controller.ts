@@ -26,15 +26,15 @@ export class AuthController {
     return this.authService.register(dto);
   }
 
-  @Post('login')
   @UseGuards(LocalAuthGuard)
+  @Post('login')
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
 
-  @Get('me')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
+  @Get('me')
   getMe(@Request() req) {
     return this.usersService.findById(req.user.id);
   }

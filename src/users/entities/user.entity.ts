@@ -2,13 +2,16 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../enums/role.enum';
 
-@Entity()
+@Entity('users')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   username: string;
+
+  @Column({ nullable: true })
+  email: string;
 
   @Exclude()
   @Column()
