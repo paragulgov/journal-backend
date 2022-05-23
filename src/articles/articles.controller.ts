@@ -3,6 +3,8 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Param,
+  Patch,
   Post,
   UseGuards,
   UseInterceptors,
@@ -11,6 +13,7 @@ import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UserIdDecorator } from '../decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Controller('articles')
 export class ArticlesController {
@@ -23,9 +26,26 @@ export class ArticlesController {
     return this.articlesService.create(dto, userId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Patch(':id')
+  update(
+    @Body() dto: UpdateArticleDto,
+    @UserIdDecorator() userId: number,
+    @Param('id') id: string,
+  ) {
+    return this.articlesService.update(dto, userId, id);
+  }
+
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   getAll() {
     return this.articlesService.getAll();
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(':id')
+  getOne(@Param('id') id: string) {
+    return this.articlesService.getOne(id);
   }
 }

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './entities/article.entity';
+import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Injectable()
 export class ArticlesService {
@@ -23,7 +24,32 @@ export class ArticlesService {
     });
   }
 
+  async update(dto: UpdateArticleDto, userId: number, id: string) {
+    const article = await this.articlesRepository.findOne(id, {
+      relations: ['user'],
+    });
+
+    if (article.user.id !== userId) {
+      throw new ForbiddenException();
+    }
+
+    await this.articlesRepository.update(id, {
+      content: dto.content,
+      category: { id: dto.categoryId },
+    });
+
+    return this.articlesRepository.findOne(id, {
+      relations: ['user', 'category'],
+    });
+  }
+
   getAll() {
     return this.articlesRepository.find({ relations: ['user', 'category'] });
+  }
+
+  getOne(id: string) {
+    return this.articlesRepository.findOne(id, {
+      relations: ['user', 'category'],
+    });
   }
 }
