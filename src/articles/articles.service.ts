@@ -13,8 +13,13 @@ export class ArticlesService {
   ) {}
 
   async create(dto: CreateArticleDto, userId: number) {
+    const title = dto.content.find((el) => el?.type === 'header');
+    const subtitle = dto.content.find((el) => el?.type === 'paragraph');
+
     const created = await this.articlesRepository.save({
       ...dto,
+      title: title?.data?.text,
+      subtitle: subtitle?.data?.text,
       user: { id: userId },
       category: { id: dto.categoryId },
     });
@@ -33,8 +38,13 @@ export class ArticlesService {
       throw new ForbiddenException();
     }
 
+    const title = dto.content.find((el) => el?.type === 'header');
+    const subtitle = dto.content.find((el) => el?.type === 'paragraph');
+
     await this.articlesRepository.update(id, {
       content: dto.content,
+      title: title?.data?.text,
+      subtitle: subtitle?.data?.text,
       category: { id: dto.categoryId },
     });
 

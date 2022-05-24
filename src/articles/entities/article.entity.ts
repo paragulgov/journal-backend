@@ -15,6 +15,12 @@ export class ArticleEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: true })
+  title: string;
+
+  @Column({ nullable: true })
+  subtitle: string;
+
   @Column({ type: 'jsonb', nullable: false })
   content: IArticleContent[];
 
