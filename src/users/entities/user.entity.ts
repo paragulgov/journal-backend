@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { Role } from '../../enums/role.enum';
+import { CommentEntity } from '../../comments/entities/comment.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -19,6 +20,9 @@ export class UserEntity {
 
   @Column({ type: 'enum', enum: Role, default: Role.User })
   role: Role;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  comments: CommentEntity[];
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
