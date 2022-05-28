@@ -3,3 +3,8 @@ export enum Role {
   Moderator = 'moderator',
   Admin = 'admin',
 }
+
+export enum LikeType {
+  Like = 'like',
+  Dislike = 'dislike',
+}

@@ -3,9 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArticlesService } from './articles.service';
 import { ArticlesController } from './articles.controller';
 import { ArticleEntity } from './entities/article.entity';
+import { LikesModule } from '../likes/likes.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ArticleEntity])],
+  imports: [LikesModule, TypeOrmModule.forFeature([ArticleEntity])],
   controllers: [ArticlesController],
   providers: [ArticlesService],
 })

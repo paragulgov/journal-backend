@@ -25,7 +25,7 @@ export class CommentsService {
   }
 
   findAll() {
-    return this.commentsRepository.find({ relations: ['user'] });
+    return this.commentsRepository.find({ relations: ['user', 'article'] });
   }
 
   findOne(id: number) {

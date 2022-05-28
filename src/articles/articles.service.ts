@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './entities/article.entity';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { LikesService } from '../likes/likes.service';
+import { LikeType } from '../enums/role.enum';
 
 @Injectable()
 export class ArticlesService {
   constructor(
     @InjectRepository(ArticleEntity)
     private articlesRepository: Repository<ArticleEntity>,
+    private readonly likesService: LikesService,
   ) {}
 
   async create(dto: CreateArticleDto, userId: number) {
@@ -54,12 +57,26 @@ export class ArticlesService {
   }
 
   getAll() {
-    return this.articlesRepository.find({ relations: ['user', 'category'] });
+    return this.articlesRepository.find({
+      relations: ['user', 'category', 'likes', 'likes.user', 'comments'],
+    });
   }
 
-  getOne(id: string) {
-    return this.articlesRepository.findOne(id, {
-      relations: ['user', 'category'],
+  async getOne(articleId: string) {
+    const article = await this.articlesRepository.findOne(articleId, {
+      relations: ['user', 'category', 'likes', 'likes.user'],
     });
+
+    const likesCount = await this.likesService.likesCountToArticle(
+      articleId,
+      LikeType.Like,
+    );
+
+    const dislikesCount = await this.likesService.likesCountToArticle(
+      articleId,
+      LikeType.Dislike,
+    );
+
+    return { ...article, likesCount, dislikesCount };
   }
 }

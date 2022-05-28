@@ -11,6 +11,7 @@ import { IArticleContent } from '../types/article.types';
 import { UserEntity } from '../../users/entities/user.entity';
 import { CategoryEntity } from '../../categories/entities/category.entity';
 import { CommentEntity } from '../../comments/entities/comment.entity';
+import { LikeToArticleEntity } from '../../likes/entities/like-to-article.entity';
 
 @Entity('articles')
 export class ArticleEntity {
@@ -34,6 +35,9 @@ export class ArticleEntity {
 
   @OneToMany(() => CommentEntity, (comment) => comment.article)
   comments: CommentEntity[];
+
+  @OneToMany(() => LikeToArticleEntity, (like) => like.article)
+  likes: LikeToArticleEntity[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
