@@ -23,7 +23,7 @@ import { LikesModule } from './likes/likes.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get<boolean>('DB_SYNCHRONIZE') || false,
+        synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
       }),
       inject: [ConfigService],
     }),
