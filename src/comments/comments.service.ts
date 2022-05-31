@@ -36,6 +36,13 @@ export class CommentsService {
     });
   }
 
+  findMyComments(userId: number) {
+    return this.commentsRepository.find({
+      where: { user: { id: userId } },
+      relations: ['article'],
+    });
+  }
+
   update(id: number, dto: UpdateCommentDto) {
     return `This action updates a #${id} comment`;
   }

@@ -26,6 +26,19 @@ export class ArticlesController {
     return this.articlesService.create(dto, userId);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get()
+  getAll() {
+    return this.articlesService.getAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('user/published')
+  getMyArticles(@UserIdDecorator() userId: number) {
+    return this.articlesService.getMyArticles(userId);
+  }
+
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
@@ -35,12 +48,6 @@ export class ArticlesController {
     @Param('id') id: string,
   ) {
     return this.articlesService.update(dto, userId, id);
-  }
-
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
-  getAll() {
-    return this.articlesService.getAll();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

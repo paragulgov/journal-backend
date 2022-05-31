@@ -20,6 +20,19 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get()
+  findAll() {
+    return this.commentsService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('user')
+  findMyComments(@UserIdDecorator() userId: number) {
+    return this.commentsService.findMyComments(userId);
+  }
+
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @Post(':id')
@@ -29,12 +42,6 @@ export class CommentsController {
     @UserIdDecorator() userId: number,
   ) {
     return this.commentsService.create(dto, articleId, userId);
-  }
-
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

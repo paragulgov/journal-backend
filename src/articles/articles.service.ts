@@ -79,4 +79,11 @@ export class ArticlesService {
 
     return { ...article, likesCount, dislikesCount };
   }
+
+  async getMyArticles(userId: number) {
+    return await this.articlesRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user', 'category', 'comments'],
+    });
+  }
 }
