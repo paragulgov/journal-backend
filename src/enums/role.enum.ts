@@ -8,3 +8,8 @@ export enum LikeType {
   Like = 'like',
   Dislike = 'dislike',
 }
+
+export enum ArticleStatus {
+  published = 'published',
+  pending = 'pending',
+}

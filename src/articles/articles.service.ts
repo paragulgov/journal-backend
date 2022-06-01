@@ -5,7 +5,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { ArticleEntity } from './entities/article.entity';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { LikesService } from '../likes/likes.service';
-import { LikeType } from '../enums/role.enum';
+import { ArticleStatus, LikeType } from '../enums/role.enum';
 
 @Injectable()
 export class ArticlesService {
@@ -48,6 +48,9 @@ export class ArticlesService {
       content: dto.content,
       title: title?.data?.text,
       subtitle: subtitle?.data?.text,
+      status: ArticleStatus.pending,
+      rejected: false,
+      rejectedReason: '',
       category: { id: dto.categoryId },
     });
 
@@ -56,8 +59,42 @@ export class ArticlesService {
     });
   }
 
+  async acceptPendingArticle(id: string) {
+    await this.articlesRepository.update(id, {
+      status: ArticleStatus.published,
+    });
+
+    return { message: 'Статья одобрена' };
+  }
+
+  async rejectPendingArticle(id: string, reason: string) {
+    await this.articlesRepository.update(id, {
+      status: ArticleStatus.pending,
+      rejected: true,
+      rejectedReason: reason,
+    });
+
+    return { message: 'Статья отклонена' };
+  }
+
   getAll() {
     return this.articlesRepository.find({
+      relations: ['user', 'category', 'likes', 'likes.user', 'comments'],
+    });
+  }
+
+  getPopular() {
+    return this.articlesRepository.find({
+      where: { status: 'published' },
+      order: { views: 'DESC' },
+      relations: ['user', 'category', 'likes', 'likes.user', 'comments'],
+    });
+  }
+
+  getPendingArticles() {
+    return this.articlesRepository.find({
+      where: { status: 'pending' },
+      order: { updatedAt: 'DESC' },
       relations: ['user', 'category', 'likes', 'likes.user', 'comments'],
     });
   }
@@ -66,6 +103,12 @@ export class ArticlesService {
     const article = await this.articlesRepository.findOne(articleId, {
       relations: ['user', 'category', 'likes', 'likes.user'],
     });
+
+    if (article) {
+      await this.articlesRepository.update(articleId, {
+        views: () => 'views + 1',
+      });
+    }
 
     const likesCount = await this.likesService.likesCountToArticle(
       articleId,
@@ -80,9 +123,16 @@ export class ArticlesService {
     return { ...article, likesCount, dislikesCount };
   }
 
-  async getMyArticles(userId: number) {
+  async getMyPublishedArticles(userId: number) {
     return await this.articlesRepository.find({
-      where: { user: { id: userId } },
+      where: { user: { id: userId }, status: 'published' },
+      relations: ['user', 'category', 'comments'],
+    });
+  }
+
+  async getMyDraftArticles(userId: number) {
+    return await this.articlesRepository.find({
+      where: { user: { id: userId }, status: 'pending' },
       relations: ['user', 'category', 'comments'],
     });
   }
