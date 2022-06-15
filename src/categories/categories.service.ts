@@ -15,6 +15,14 @@ export class CategoriesService {
     return this.categoriesRepository.save(dto);
   }
 
+  // update(id: number, dto: UpdateCategoryDto) {
+  //   return this.categoriesRepository.update(id, dto);
+  // }
+
+  remove(id: number) {
+    return this.categoriesRepository.delete(id);
+  }
+
   findAll() {
     return this.categoriesRepository.find();
   }

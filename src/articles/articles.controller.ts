@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -27,6 +28,11 @@ export class ArticlesController {
   @Post()
   create(@Body() dto: CreateArticleDto, @UserIdDecorator() userId: number) {
     return this.articlesService.create(dto, userId);
+  }
+
+  @Get('/search')
+  searchPosts(@Query() dto: any) {
+    return this.articlesService.search(dto);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)

@@ -15,6 +15,22 @@ export class ArticlesService {
     private readonly likesService: LikesService,
   ) {}
 
+  async search(dto: any) {
+    const qb = this.articlesRepository.createQueryBuilder('a');
+
+    if (dto.value) {
+      qb.where(`a.title ILIKE :title`);
+      qb.orWhere(`a.subtitle ILIKE :subtitle`);
+    }
+
+    qb.setParameters({
+      title: `%${dto.value}%`,
+      subtitle: `%${dto.value}%`,
+    });
+
+    return qb.getMany();
+  }
+
   async create(dto: CreateArticleDto, userId: number) {
     const title = dto.content.find((el) => el?.type === 'header');
     const subtitle = dto.content.find((el) => el?.type === 'paragraph');

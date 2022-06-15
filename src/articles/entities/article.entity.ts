@@ -43,7 +43,7 @@ export class ArticleEntity {
   @ManyToOne(() => UserEntity, { nullable: false })
   user: UserEntity;
 
-  @ManyToOne(() => CategoryEntity, { nullable: false })
+  @ManyToOne(() => CategoryEntity, { nullable: true })
   category: CategoryEntity;
 
   @OneToMany(() => CommentEntity, (comment) => comment.article)
@@ -51,6 +51,9 @@ export class ArticleEntity {
 
   @OneToMany(() => LikeToArticleEntity, (like) => like.article)
   likes: LikeToArticleEntity[];
+
+  // @ManyToOne(() => UserEntity, (object) => object.id)
+  // rejectedBy: UserEntity;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
